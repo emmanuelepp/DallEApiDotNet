@@ -1,0 +1,41 @@
+﻿@page "/"
+@using DallEApiDotNet.Models
+@using DallEApiDotNet.Services;
+@inject IImageGenerator ImageGenerator
+
+<h3>Dall-E2 API</h3>
+
+<EditForm Model="@inputData">
+    <textarea class="form-control" @bind="inputData.Text" style="width:500px;"
+              placeholder="Enter your desire..."></textarea>
+    <br />
+    <input type="number" @bind="inputData.NumberOfImages" placeholder="How many images do you wanna see?" />
+    <button class="btn btn-primary" @onclick="DallePage">Generate image</button>
+
+    @if (response != null && response.Data != null && response.Data.Any())
+    {
+        <div id="display" class="col-md-12 row">
+            @foreach (var item in response.Data)
+            {
+                <div class="col-md-3 p-10" style="padding-top:10px">
+                    <img class="p-10" src="@item.UrlData" />
+                </div>
+            }
+        </div>
+    }
+
+
+</EditForm>
+
+@code {
+
+    InputData inputData = new InputData();
+    Response response;
+
+    private async void DallePage()
+    {
+        response = await ImageGenerator.GenerateImg(inputData);
+        StateHasChanged();
+    }
+
+}
